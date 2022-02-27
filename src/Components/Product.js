@@ -1,59 +1,97 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+export default function Product(props) {
+  /*See that we divided our state to two parts, one for the product and one for the updated value, in our old 
+component both of these variables were stored in a single state value. 
+What this will help us do is, greatly improve performance especially in bigger components. Remember 
+that React uses a virtual DOM and every time we change something in the state, it calculates the 
+differences and re-renders. Now we can split those calculates to a case specific approach. 
+As we notice useState must: 
+ Be declared with a const 
+ Is deconstructed into a value and a setter for said value 
+ Takes the default value as an argument 
+*/
+  const [product, setProduct] = useState(props.product);
+  const [updated, setUpdated] = useState(0);
 
-class Product extends Component {
-  constructor(props) {
-    super(props);
-    console.log(this.props)
-    this.state = { product: props.product, updated: 0, likes: 0 };
-    this.addLikes = this.addLikes.bind(this);
-  }
-  componentDidMount() {
-    console.log("I have finished rendering");
-  }
-  componentDidUpdate() {
-    console.log("I have been updated  " + this.state.updated + "  times");
-  }
-  componentWillUnmount() {
-    console.log("I'm being destroyed");
-  }
-  addLikes() {
-    this.setState((prev) => ({
-      likes: prev.likes + 1,
-      updated: prev.updated + 1,
-    }));
-  }
-  render() {
-    return (
-      
-      <ProductFrame>
-        <ProductImageWrapper>
-          <ProductImage src={this.props.product.img} />
-        </ProductImageWrapper>
-        <ProductInfoWrapper>
-          <span>{this.props.product.name}</span>
-          <span>{this.props.product.price}</span>
-          <span>Likes {this.state.likes}</span>
-          <button onClick={this.addLikes}>Like</button>
-        </ProductInfoWrapper>
-      </ProductFrame>
+  /* The first argument of useEffect is the actual effect to run, this will run only one time when the 
+component renders. 
+The return function is the “cleaner” which will behave like “componentWillUnmount” in this specific 
+case. 
+*/
+  useEffect(() => {
+    console.log(
+      "I have finished rendering " +
+        props.product.name +
+        " price: " +
+        props.product.price
     );
-  }
+    return () => {
+      console.log("I'm being destroyed");
+    };
+  });
+  const addLike = () => {
+    setProduct({
+      ...product,
+      likes: Number(product.likes) + 1,
+    });
+    setUpdated((u) => u + 1);
+  };
+  /*This hook will trigger each time “updated” value mutates. [updated] this is called dependency array, 
+it’s the array where our hook will “listen” to any changes on variables we include in the array and will 
+trigger the hook. */
+  useEffect(() => {
+    console.log(updated);
+  }, [updated]);
+  return (
+    product.likes >= 5 ? (
+<ProductFrameBest>
+      <ProductImageWrapperBest>
+        <ProductImageBest src={product.img}></ProductImageBest>
+      </ProductImageWrapperBest>
+      <ProductInfoWrapperBest>
+      <span>Best Product</span>
+        <span>
+        <Link to={"/product/" + product.name}>{product.name}</Link>
+        </span>
+        <span> {product.price} </span>
+        <span>Likes : {product.likes} </span>
+        <Button onClick={addLike}>Like</Button>
+      </ProductInfoWrapperBest>
+    </ProductFrameBest>
+    ):(
+    <ProductFrame>
+      <ProductImageWrapper>
+        <ProductImage src={product.img}></ProductImage>
+      </ProductImageWrapper>
+      <ProductInfoWrapper>
+        <span>
+          <Link to={"/product/" + product.name}>{product.name}</Link>
+        </span>
+        <span> {product.price} </span>
+        <span>Likes : {product.likes} </span>
+        <Button onClick={addLike}>Like</Button>
+      </ProductInfoWrapper>
+    </ProductFrame>
+    )
+    
+  );
 }
+
 const ProductFrame = styled.div`
   border-radius: 25px;
-  min-height: 150px;
-  max-width: 150px;
-  min-width: 150px;
+  min-height: 200px;
+  min-width: 200px;
   background-color: rgb(110, 110, 110, 0.7);
   margin: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+ 
 `;
 const ProductImageWrapper = styled.div`
   margin: 5px;
-  max-width: 150px;
+  max-width: 200px;
 `;
 const ProductImage = styled.img`
   width: 100%;
@@ -61,11 +99,53 @@ const ProductImage = styled.img`
   border-radius: 25px;
 `;
 const ProductInfoWrapper = styled.div`
-margin-top: auto;
-margin-bottom: 5px;
-display: flex;
-flex-direction: column;
-& > span {
-  text-align: center`;
-
-export default Product;
+  margin-top: auto;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  & > span {
+    text-align: center;
+  }
+`;
+const ProductFrameBest = styled.div`
+  border-radius: 25px;
+  min-height: 200px;
+  min-width: 200px;
+  background-color: #DB7093;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  animation:  clignote 2s linear infinite;
+  @keyframes clignote {  
+  50% { opacity: 0.5; }
+}
+`;
+const ProductImageWrapperBest = styled.div`
+  margin: 5px;
+  max-width: 200px;
+`;
+const ProductImageBest = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 25px;
+`;
+const ProductInfoWrapperBest = styled.div`
+  color:white;
+  margin-top: auto;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  & > span {
+    text-align: center;
+  }
+`;
+const Button = styled.button`
+  /* Adapt the colors based on primary prop */
+  background: ${props => props.primary ? "palevioletred" : "white"};
+  color: ${props => props.primary ? "white" : "palevioletred"};
+  font-size: 1.5em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid palevioletred;
+  border-radius: 3px;
+`;
