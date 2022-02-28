@@ -23,9 +23,9 @@ case.
   useEffect(() => {
     console.log(
       "I have finished rendering " +
-        props.product.name +
+        props.product.title +
         " price: " +
-        props.product.price
+        props.product.title
     );
     return () => {
       console.log("I'm being destroyed");
@@ -48,12 +48,12 @@ trigger the hook. */
     product.likes >= 5 ? (
 <ProductFrameBest>
       <ProductImageWrapperBest>
-        <ProductImageBest src={product.img}></ProductImageBest>
+        <ProductImageBest src={`${process.env.REACT_APP_API_URL_UPLOADS}/${product.image}`}></ProductImageBest>
       </ProductImageWrapperBest>
       <ProductInfoWrapperBest>
       <span>Best Product</span>
         <span>
-        <Link to={"/product/" + product.name}>{product.name}</Link>
+        <Link to={"/product/" + product._id}>{product.title}</Link>
         </span>
         <span> {product.price} </span>
         <span>Likes : {product.likes} </span>
@@ -63,11 +63,11 @@ trigger the hook. */
     ):(
     <ProductFrame>
       <ProductImageWrapper>
-        <ProductImage src={product.img}></ProductImage>
+        <ProductImage src={`${process.env.REACT_APP_API_URL_UPLOADS}/${product.image}`}></ProductImage>
       </ProductImageWrapper>
       <ProductInfoWrapper>
         <span>
-          <Link to={"/product/" + product.name}>{product.name}</Link>
+          <Link to={"/product/" + product._id}>{product.title}</Link>
         </span>
         <span> {product.price} </span>
         <span>Likes : {product.likes} </span>

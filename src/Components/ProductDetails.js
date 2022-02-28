@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import products from "../products.json";
+import { useApi } from "../hooks/useApi";
 import Product from "./Product";
 export default function ProductDetails(props) {
-  const name = props.match.params.name; /*We used props.match.params.name; 
+  const id = props.match.params.id; /*We used props.match.params.name; 
  This is given by the react-router-dom and will help us get relevant information about our navigation 
  behavior. The router will automatically match the passes prop to the name we assigned in the Route. */
-  const toRender = products.filter((product) => product.name === name)[0];
+  const [toRender,err,reload] = useApi('product/'+id);
   return (
     <>
       {/* We also have a “history” prop that contains the history of our page navigation */}
@@ -16,9 +16,9 @@ export default function ProductDetails(props) {
           <>
 
           <ContentBox>
-        <Content1><img src={toRender.img} width="600" height="600" alt={toRender.name}/></Content1>
+        <Content1><img src={`${process.env.REACT_APP_API_URL_UPLOADS}/${toRender.image}`} width="600" height="600" alt={toRender.name}/></Content1>
         <Content2>
-        <H1>{toRender.name}</H1>
+        <H1>{toRender.title}</H1>
         <H3>Description 
         :</H3>
         <Span>{toRender.description}</Span>

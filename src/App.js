@@ -81,6 +81,8 @@ const Home = React.lazy(() => import("./Home"));
 const Header = React.lazy(() => import("./Components/Navbar"));
 const Products = React.lazy(() => import("./Products"));
 const ProductDetails = React.lazy(() => import("./Components/ProductDetails"));
+const AddProduct = React.lazy(() => import("./Components/AddProduct"));
+
 function App() {
   return (
     <>
@@ -111,7 +113,11 @@ our page will render <p>Default rendered page!</p> */}
               render={(props) => <Products {...props} />}
             ></Route>
             <Route
-              path="/product/:name"
+              path="/add"
+              render={(props) => <AddProduct {...props} />}
+            ></Route>
+            <Route
+              path="/product/:id"
               render={(props) => <ProductDetails {...props} />}
             ></Route>
             <Route exact render={() => <p>Page not found!</p>}></Route>
