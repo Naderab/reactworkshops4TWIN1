@@ -1,89 +1,84 @@
+import React from "react";
+import styled from "styled-components";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
 import { queryApi } from "../utils/queryApi";
-
-export default function AddProduct()
-{
-    const history = useHistory();
-    const [error,setError] = useState({message:'',visible:false})
-    const [formData,setFormData] = useState({
-        title:'',
-        description:'',
-        price:'',
-        image:'',
-        likes:'0'
-    })
-    const onChange = (e) => {
-        setFormData({...formData,[e.target.name]:e.target.value})
-    }
-    const onChangeFile = (e) =>{
-        setFormData({...formData,image:e.target.files[0]})
-    }
-    console.log(formData)
-    const {title,description,price,image,likes} = formData;
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        const[,err] = await queryApi('product',formData,'POST',true);
-        if(err){
-            setError({
-                visible:true,
-                message:err.message
-            })
-        }else {
-            history.push('/products/')
-        }
-    }
-    return(
-        <Wrapper>
-            <Form onSubmit={onSubmit}>
-            
-            <Title>Add New Product</Title>
-            <FormGroup>
-                {error.visible && <FormError>{error.message}</FormError>}
-            </FormGroup>
-                <FormGroup>
-                    <FormField
-                        name="title"
-                        placeholder="Title"
-                        type="text"
-                        value={title}
-                        onChange={(e)=>onChange(e)}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <FormField
-                        name="description"
-                        placeholder="Description"
-                        type="text"
-                        value={description}
-                        onChange={(e)=>onChange(e)}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <FormField
-                        name="price"
-                        placeholder="Price"
-                        type="number"
-                        value={price}
-                        onChange={(e)=>onChange(e)}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <FormField
-                        name="image"
-                        type="file"
-                        onChange={(e)=>onChangeFile(e)}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <FormButton>Save</FormButton>
-                </FormGroup>
-            </Form>
-        </Wrapper>
-
-    )
-
+export default function AddProduct() {
+  const history = useHistory();
+  const [showLoader, setShowLoader] = useState(false);
+  const [error, setError] = useState({ visible: false, message: "" });
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    price: "",
+    image: "",
+    likes: "0",
+  });
+  const { title, description, price } = formData;
+  const onChangeFile = (e) =>
+    setFormData({ ...formData, image: e.target.files[0] });
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setShowLoader(true);
+    const [, err] = await queryApi("product", formData, "POST", true);
+    if (err) {
+      setShowLoader(false);
+      setError({
+        visible: true,
+        message: JSON.stringify(err.errors, null, 2),
+      });
+    } else history.push("/products");
+  };
+  return (
+    <Wrapper className="fade">
+      
+      <Form onSubmit={onSubmit}>
+      <FormGroup><Title>Add new product</Title></FormGroup>
+        <FormGroup>
+          {error.visible && <FormError>{error.message}</FormError>}
+        </FormGroup>
+        <FormGroup>
+          <FormField
+            type="text"
+            name="title"
+            placeholder="title"
+            value={title}
+            onChange={(e) => onChange(e)}
+          ></FormField>
+        </FormGroup>
+        <FormGroup>
+          <FormField
+            type="text"
+            name="description"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => onChange(e)}
+          ></FormField>
+        </FormGroup>
+        <FormGroup>
+          <FormField
+            type="number"
+            step="0.1"
+            name="price"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => onChange(e)}
+          ></FormField>
+        </FormGroup>
+        <FormGroup>
+          <FormField
+            type="file"
+            name="image"
+            onChange={(e) => onChangeFile(e)}
+          ></FormField>
+        </FormGroup>
+        {showLoader && <Spinner></Spinner>}
+        <FormButton disabled={showLoader}>Save</FormButton>
+      </Form>
+    </Wrapper>
+  );
 }
 const Wrapper = styled.div`
   height: 100%;
