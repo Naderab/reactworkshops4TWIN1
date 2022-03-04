@@ -82,6 +82,7 @@ const Header = React.lazy(() => import("./Components/Navbar"));
 const Products = React.lazy(() => import("./Products"));
 const ProductDetails = React.lazy(() => import("./Components/ProductDetails"));
 const AddProduct = React.lazy(() => import("./Components/AddProduct"));
+const UpdateProduct = React.lazy(() => import("./Components/UpdateProduct"));
 
 function App() {
   return (
@@ -115,6 +116,10 @@ our page will render <p>Default rendered page!</p> */}
             <Route
               path="/add"
               render={(props) => <AddProduct {...props} />}
+            ></Route>
+            <Route
+              path="/update/:id"
+              render={(props) => <UpdateProduct {...props} />}
             ></Route>
             <Route
               path="/product/:id"

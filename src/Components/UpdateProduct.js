@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { queryApi } from "../utils/queryApi";
-export default function AddProduct() {
+import { useParams } from "react-router-dom";
+export default function UpdateProduct() {
+  const {id} = useParams();
   const history = useHistory();
   const [showLoader, setShowLoader] = useState(false);
   const [error, setError] = useState({ visible: false, message: "" });
@@ -14,6 +16,15 @@ export default function AddProduct() {
     image: "",
     likes: "0",
   });
+  useEffect(()=>{
+    async function fetchProduct() {
+      const [res,err] = await queryApi('product/'+id);
+      if(res){
+        setFormData({title:res.title,description:res.description,price:res.price,image:res.image,likes:res.likes})
+      }
+    }
+    fetchProduct();
+  },[id])
   const { title, description, price } = formData;
   const onChangeFile = (e) =>
     setFormData({ ...formData, image: e.target.files[0] });
@@ -22,7 +33,7 @@ export default function AddProduct() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setShowLoader(true);
-    const [, err] = await queryApi("product", formData, "POST", true);
+    const [, err] = await queryApi("product/"+id, formData, "PUT", true);
     if (err) {
       setShowLoader(false);
       setError({

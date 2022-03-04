@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 export default function Product(props) {
@@ -12,6 +13,7 @@ As we notice useState must:
  Is deconstructed into a value and a setter for said value 
  Takes the default value as an argument 
 */
+    const history = useHistory();
   const [product, setProduct] = useState(props.product);
   const [updated, setUpdated] = useState(0);
 
@@ -58,6 +60,11 @@ trigger the hook. */
         <span> {product.price} </span>
         <span>Likes : {product.likes} </span>
         <Button onClick={addLike}>Like</Button>
+        <Action>
+          <ButtonUpdate onClick={()=>history.push('/update/'+product._id)}>Update</ButtonUpdate>
+          <ButtonDelete onClick={()=>props.deleteProduct(product._id)}>Delete</ButtonDelete>
+
+        </Action>
       </ProductInfoWrapperBest>
     </ProductFrameBest>
     ):(
@@ -72,6 +79,10 @@ trigger the hook. */
         <span> {product.price} </span>
         <span>Likes : {product.likes} </span>
         <Button onClick={addLike}>Like</Button>
+        <Action>
+          <ButtonUpdate onClick={()=>history.push('/update/'+product._id)}>Update</ButtonUpdate>
+          <ButtonDelete onClick={()=>props.deleteProduct(product._id)}>Delete</ButtonDelete>
+        </Action>
       </ProductInfoWrapper>
     </ProductFrame>
     )
@@ -147,5 +158,33 @@ const Button = styled.button`
   margin: 1em;
   padding: 0.25em 1em;
   border: 2px solid palevioletred;
+  border-radius: 3px;
+`;
+const Action = styled.footer`
+  background: transparent;
+  grid-area: footer;
+  padding: 0.25rem;
+  text-align: right !important;
+
+`;
+const ButtonDelete = styled.button`
+  /* Adapt the colors based on primary prop */
+  background: ${props => props.primary ? "red" : "white"};
+  color: ${props => props.primary ? "white" : "red"};
+  font-size: 1.1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid red;
+  border-radius: 3px;
+`;
+const ButtonUpdate = styled.button`
+  /* Adapt the colors based on primary prop */
+  background: ${props => props.primary ? "blue" : "white"};
+  color: ${props => props.primary ? "white" : "blue"};
+
+  font-size: 1.1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid blue;
   border-radius: 3px;
 `;
